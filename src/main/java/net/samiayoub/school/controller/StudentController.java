@@ -1,0 +1,70 @@
+package net.samiayoub.school.controller;
+
+import net.samiayoub.school.dto.requets.StudentRequest;
+import net.samiayoub.school.dto.responses.CourseResponse;
+import net.samiayoub.school.dto.responses.GradeDetailsResponse;
+import net.samiayoub.school.dto.responses.StudentResponse;
+import net.samiayoub.school.mapper.StudentMapper;
+import net.samiayoub.school.service.StudentService;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1/students")
+public class StudentController {
+    private final StudentService studentService;
+    private final StudentMapper studentMapper;
+
+    public StudentController(StudentService studentService, StudentMapper studentMapper) {
+        this.studentService = studentService;
+        this.studentMapper = studentMapper;
+    }
+
+    @GetMapping
+    public List<StudentResponse> getStudents() {
+        return studentService.getAllStudents();
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public StudentResponse addStudent(@RequestBody StudentRequest studentRequest) {
+        return studentService.createStudent(studentMapper.toEntity(studentRequest));
+    }
+
+    @PutMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public StudentResponse updateStudent(@RequestBody StudentRequest studentRequest) {
+        return studentService.updateStudent(studentMapper.toEntity(studentRequest));
+    }
+
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteStudent(@PathVariable Long id) {
+        studentService.deleteStudentById(id);
+    }
+
+    @GetMapping("/{id}")
+    public StudentResponse getStudentById(@PathVariable Long id) {
+        return studentService.getStudentById(id);
+    }
+
+    @GetMapping("/{id}/courses")
+    public List<CourseResponse> getCourses(@PathVariable Long id) {
+        return studentService.getCourses(id);
+    }
+
+    @GetMapping("/{id}/grades")
+    public List<GradeDetailsResponse> getGradesForStudent(@PathVariable Long id) {
+        return studentService.getGrades(id);
+    }
+}

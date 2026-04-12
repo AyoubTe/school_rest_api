@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: school
+
+  # ── DataSource ──────────────────────────────────────────────
+  datasource:
+    url: jdbc:postgresql://172.30.31.126:5432/school_db
+    username: springstudent
+    password: springstudent
+    driver-class-name: org.postgresql.Driver
+
+  # ── JPA / Hibernate ─────────────────────────────────────────
+  jpa:
+    hibernate:
+      ddl-auto: none         # Flyway owns the schema
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: false
+
+  # ── Flyway ──────────────────────────────────────────────────
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+# ── Swagger ─────────────────────────────────────
+springdoc:
+  packages-to-scan: net.samiayoub.school.controller
+
+# ── Logging ─────────────────────────────────────
+logging:
+  level:
+    org.flywaydb: DEBUG
+
+# ── JWt Config ─────────────────────────────────────
+application:
+  security:
+    jwt:
+      # Clé secrète de 512-bit (Ultra sécurisée)
+      secret-key: E49756B4C8FAB4E48222A3E7F3B97CC330621103F418931189445EB7AF494191E0943A5D8449D087ED6500F9F637CE94A1F67A1054E912E302A09AA6639EE2B2
+      # Validité : 2 heures en millisecondes (2 * 60 * 60 * 1000)
+      expiration: 7200000

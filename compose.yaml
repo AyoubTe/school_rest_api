@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=school_db'
+      - 'POSTGRES_PASSWORD=springstudent'
+      - 'POSTGRES_USER=springstudent'
+    ports:
+      - '5432:5432'
