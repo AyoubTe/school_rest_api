@@ -5,7 +5,6 @@ import net.samiayoub.school.dto.responses.SchoolResponse;
 import net.samiayoub.school.dto.responses.TeacherResponse;
 import net.samiayoub.school.entity.Course;
 import net.samiayoub.school.entity.Teacher;
-import net.samiayoub.school.entity.User;
 import net.samiayoub.school.exception.ResourceNotFoundException;
 import net.samiayoub.school.mapper.CourseMapper;
 import net.samiayoub.school.mapper.SchoolMapper;
@@ -57,7 +56,7 @@ public class TeacherService {
         teacherRepository.deleteById(id);
     }
 
-    public List<CourseResponse> getCourseByTeacherId(Long id) {
+    public List<CourseResponse> getCoursesByTeacherId(Long id) {
         Teacher teacher = teacherRepository.findById(id).orElse(null);
         if (teacher == null) {
             throw new ResourceNotFoundException("Teacher with id " + id + " not found");
@@ -79,7 +78,31 @@ public class TeacherService {
         return (teacherRepository.findByUsername(emailOrUsername).orElse(null) != null) || (teacherRepository.findByEmail(emailOrUsername).orElse(null) != null);
     }
 
-    public User getTeacherByUsernameOrEmail(String usernameOrEmail) {
+    public Teacher getTeacherByUsernameOrEmail(String usernameOrEmail) {
         return teacherRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail).orElse(null);
+    }
+
+    public TeacherResponse getTeacherByUsername(String name) {
+        Teacher teacher = getTeacherByUsernameOrEmail(name);
+        if (teacher == null) {
+            throw new ResourceNotFoundException("Student with name: " + name + " not found");
+        }
+        return teacherMapper.toDto(teacher);
+    }
+
+    public List<CourseResponse> getCoursesByTeacherUsername(String name) {
+        Teacher teacher = getTeacherByUsernameOrEmail(name);
+        if (teacher == null) {
+            throw new ResourceNotFoundException("Student with name: " + name + " not found");
+        }
+        return courseMapper.toDtoList(teacher.getCourses());
+    }
+
+    public SchoolResponse getSchoolByUsername(String name) {
+        Teacher teacher = getTeacherByUsernameOrEmail(name);
+        if (teacher == null) {
+            throw new ResourceNotFoundException("Student with name: " + name + " not found");
+        }
+        return schoolMapper.toDto(teacher.getSchool());
     }
 }

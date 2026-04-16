@@ -30,4 +30,7 @@ public class Student extends User {
     public Student() {
         super(Role.STUDENT);
     }
+    public Student(Long id, String username, String firstname, String lastname, String email, String password) {
+        super(id, username, firstname, lastname, email, password, Role.STUDENT);
+    }
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -60,11 +61,26 @@ public class TeacherController {
 
     @GetMapping("/{id}/courses")
     public List<CourseResponse> getCourses(@PathVariable Long id) {
-        return teacherService.getCourseByTeacherId(id);
+        return teacherService.getCoursesByTeacherId(id);
     }
 
     @GetMapping("/{id}/school")
     public SchoolResponse getSchool(@PathVariable Long id) {
         return teacherService.getSchool(id);
+    }
+
+    @GetMapping("/myprofile")
+    public TeacherResponse getMyProfile(Principal principal) {
+        return teacherService.getTeacherByUsername(principal.getName());
+    }
+
+    @GetMapping("/mycourses")
+    public List<CourseResponse> getMyCourses(Principal principal) {
+        return teacherService.getCoursesByTeacherUsername(principal.getName());
+    }
+
+    @GetMapping("/myschool")
+    public SchoolResponse getMySchool(Principal principal) {
+        return teacherService.getSchoolByUsername(principal.getName());
     }
 }

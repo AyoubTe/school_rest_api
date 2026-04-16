@@ -5,7 +5,6 @@ import net.samiayoub.school.dto.responses.GradeDetailsResponse;
 import net.samiayoub.school.dto.responses.StudentResponse;
 import net.samiayoub.school.entity.GradeDetails;
 import net.samiayoub.school.entity.Student;
-import net.samiayoub.school.entity.User;
 import net.samiayoub.school.exception.ResourceNotFoundException;
 import net.samiayoub.school.mapper.CourseMapper;
 import net.samiayoub.school.mapper.GradeDetailsMapper;
@@ -76,7 +75,32 @@ public class StudentService {
         return (studentRepository.findByUsername(emailOrUsername).orElse(null) != null) || (studentRepository.findByEmail(emailOrUsername).orElse(null) != null);
     }
 
-    public User getStudentByUsernameOrEmail(String usernameOrEmail) {
+    public Student getStudentByUsernameOrEmail(String usernameOrEmail) {
         return studentRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail).orElse(null);
+    }
+
+    public StudentResponse getStudentByUsername(String name) {
+        Student student = getStudentByUsernameOrEmail(name);
+        if (student == null) {
+            throw new ResourceNotFoundException("Student with name: " + name + " not found");
+        }
+        return studentMapper.toDto(student);
+    }
+
+    public List<CourseResponse> getCoursesByStudentUsername(String name) {
+        Student student = getStudentByUsernameOrEmail(name);
+        if (student == null) {
+            throw new ResourceNotFoundException("Student with name: " + name + " not found");
+        }
+        return courseMapper.toDtoList(student.getCourses());
+    }
+
+    public List<GradeDetailsResponse> getGradesByStudentUsername(String name) {
+        Student student = getStudentByUsernameOrEmail(name);
+        if (student == null) {
+            throw new ResourceNotFoundException("Student with name: " + name + " not found");
+        }
+        List<GradeDetails> grades = gradeDetailsService.getGradesForStudent(student.getId());
+        return gradeDetailsMapper.toDtoList(grades);
     }
 }

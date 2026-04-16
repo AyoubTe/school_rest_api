@@ -19,4 +19,8 @@ public class Admin extends User {
     public Admin() {
         super(Role.ADMIN);
     }
+    public Admin(Long id, String username, String firstname, String lastname, String email, String password, String mission) {
+        super(id, username, firstname, lastname, email, password, Role.ADMIN);
+        this.mission = mission;
+    }
 }

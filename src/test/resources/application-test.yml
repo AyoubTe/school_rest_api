@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    # FORCE H2 Dialect here
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        # AND force it here just to be sure
+        dialect: org.hibernate.dialect.H2Dialect
+        # Optional: useful for debugging identity issues
+        format_sql: true
+    hibernate:
+      ddl-auto: none # Let Flyway handle the schema since you have V1__init.sql
+
+  flyway:
+    enabled: true # Ensure Flyway runs to create tables with BIGSERIAL support

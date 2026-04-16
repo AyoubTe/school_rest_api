@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -66,5 +67,20 @@ public class StudentController {
     @GetMapping("/{id}/grades")
     public List<GradeDetailsResponse> getGradesForStudent(@PathVariable Long id) {
         return studentService.getGrades(id);
+    }
+
+    @GetMapping("/myprofile")
+    public StudentResponse getMyProfile(Principal principal) {
+        return studentService.getStudentByUsername(principal.getName());
+    }
+
+    @GetMapping("/mycourses")
+    public List<CourseResponse> getMyCourses(Principal principal) {
+        return studentService.getCoursesByStudentUsername(principal.getName());
+    }
+
+    @GetMapping("/mygrades")
+    public List<GradeDetailsResponse> getMyGrades(Principal principal) {
+        return studentService.getGradesByStudentUsername(principal.getName());
     }
 }

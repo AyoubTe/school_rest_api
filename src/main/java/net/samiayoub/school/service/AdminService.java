@@ -2,7 +2,6 @@ package net.samiayoub.school.service;
 
 import net.samiayoub.school.dto.responses.AdminResponse;
 import net.samiayoub.school.entity.Admin;
-import net.samiayoub.school.entity.User;
 import net.samiayoub.school.exception.ResourceNotFoundException;
 import net.samiayoub.school.mapper.AdminMapper;
 import net.samiayoub.school.repository.AdminRepository;
@@ -53,7 +52,7 @@ public class AdminService {
         return (adminRepository.findByUsername(emailOrUsername).orElse(null) != null) || (adminRepository.findByEmail(emailOrUsername).orElse(null) != null);
     }
 
-    public User getAdminByUsernameOrEmail(String usernameOrEmail) {
+    public Admin getAdminByUsernameOrEmail(String usernameOrEmail) {
         return adminRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail).orElse(null);
     }
 }

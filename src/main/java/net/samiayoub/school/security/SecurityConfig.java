@@ -3,6 +3,7 @@ package net.samiayoub.school.security;
 import net.samiayoub.school.security.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -20,6 +21,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private static final String ADMIN = "ADMIN";
+    private static final String STUDENT = "STUDENT";
+    private static final String TEACHER = "TEACHER";
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
@@ -59,17 +63,30 @@ public class SecurityConfig {
                                         /* ##########################################
                                          *  Admin endpoints
                                          *///########################################
-                                        .requestMatchers("/api/v1/admins/**").hasRole("ADMIN")
+                                        .requestMatchers("/api/v1/admins/**").hasRole(ADMIN)
 
                                         /* ##########################################
                                          *  Student endpoints
                                          *///########################################
-                                        .requestMatchers("/api/v1/students/**").hasAnyRole("STUDENT", "ADMIN")
+                                        .requestMatchers(HttpMethod.GET, "/api/v1/students/myprofile", "/api/v1/students/mygrades", "/api/v1/students/mycourses").hasRole(STUDENT)
+                                        .requestMatchers(HttpMethod.GET, "/api/v1/students").hasRole(ADMIN)
+                                        .requestMatchers(HttpMethod.PUT, "/api/v1/students").hasRole(ADMIN)
+                                        .requestMatchers(HttpMethod.DELETE, "/api/v1/students/{id}").hasRole(ADMIN)
+                                        .requestMatchers(HttpMethod.POST, "/api/v1/students").hasRole(ADMIN)
+                                        .requestMatchers(HttpMethod.GET, "/api/v1/students/{id}").hasAnyRole(ADMIN, TEACHER)
+                                        .requestMatchers(HttpMethod.GET, "/api/v1/students/{id}/**").hasAnyRole(ADMIN, TEACHER)
 
                                         /* ##########################################
                                          *  Teacher endpoints
                                          *///########################################
-                                        .requestMatchers("/api/v1/teachers").hasAnyRole("TEACHER", "ADMIN")
+                                        .requestMatchers(HttpMethod.GET, "/api/v1/teachers/myprofile", "/api/v1/teachers/mycourses", "/api/v1/teachers/myschool").hasRole(TEACHER)
+                                        .requestMatchers(HttpMethod.GET, "/api/v1/teachers").hasRole(ADMIN)
+                                        .requestMatchers(HttpMethod.POST, "/api/v1/teachers").hasRole(ADMIN)
+                                        .requestMatchers(HttpMethod.PUT, "/api/v1/teachers").hasRole(ADMIN)
+                                        .requestMatchers(HttpMethod.DELETE, "/api/v1/teachers/{id}").hasRole(ADMIN)
+                                        .requestMatchers(HttpMethod.GET, "/api/v1/teachers/{id}").hasAnyRole(ADMIN, STUDENT)
+                                        .requestMatchers("/api/v1/teachers").hasAnyRole(TEACHER, ADMIN)
+                                        .requestMatchers(HttpMethod.GET, "/api/v1/teachers/{id}/**").hasRole(ADMIN)
                                         .anyRequest().authenticated()
                 ).sessionManagement(
                         session ->

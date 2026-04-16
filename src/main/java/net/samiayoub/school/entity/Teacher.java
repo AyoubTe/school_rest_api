@@ -32,4 +32,9 @@ public class Teacher extends User {
     public Teacher() {
         super(Role.TEACHER);
     }
+
+    public Teacher(Long id, String username, String firstname, String lastname, String email, String password, String discipline) {
+        super(id, username, firstname, lastname, email, password, Role.TEACHER);
+        this.discipline = discipline;
+    }
 }
