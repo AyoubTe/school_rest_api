@@ -4,9 +4,13 @@ import net.samiayoub.school.dto.requets.CourseRequest;
 import net.samiayoub.school.dto.responses.CourseResponse;
 import net.samiayoub.school.dto.responses.StudentResponse;
 import net.samiayoub.school.dto.responses.TeacherResponse;
+import net.samiayoub.school.entity.Course;
+import net.samiayoub.school.entity.Teacher;
 import net.samiayoub.school.mapper.CourseMapper;
 import net.samiayoub.school.service.CourseService;
+import net.samiayoub.school.service.TeacherService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -24,10 +29,12 @@ import java.util.List;
 public class CourseController {
     private final CourseService courseService;
     private final CourseMapper courseMapper;
+    private final TeacherService teacherService;
 
-    public CourseController(CourseService courseService, CourseMapper courseMapper) {
+    public CourseController(CourseService courseService, CourseMapper courseMapper, TeacherService teacherService) {
         this.courseService = courseService;
         this.courseMapper = courseMapper;
+        this.teacherService = teacherService;
     }
 
     @GetMapping
@@ -38,13 +45,20 @@ public class CourseController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CourseResponse addCourse(@RequestBody CourseRequest courseRequest) {
-        return courseService.createCourse(courseMapper.toEntity(courseRequest));
+        Principal principal = SecurityContextHolder.getContext().getAuthentication();
+        Teacher teacher = teacherService.getTeacherByUsernameOrEmail(principal.getName());
+        Course course = courseMapper.toEntity(courseRequest);
+        course.setTeacher(teacher);
+        return courseService.createCourse(course);
     }
 
     @PutMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public CourseResponse updateCourse(@RequestBody CourseRequest courseRequest) {
-        return courseService.updateCourse(courseMapper.toEntity(courseRequest));
+    public CourseResponse updateCourse(@RequestBody CourseResponse courseRequest) {
+        Course course = new Course();
+        course.setId(courseRequest.id());
+        course.setCode(courseRequest.code());
+        course.setName(courseRequest.name());
+        return courseService.updateCourse(course);
     }
 
     @DeleteMapping("/{id}")

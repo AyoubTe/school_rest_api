@@ -61,6 +61,31 @@ public class SecurityConfig {
                                         .requestMatchers("/ws/**").permitAll() // WebSockets
 
                                         /* ##########################################
+                                         *  School endpoints
+                                         *///########################################
+                                        .requestMatchers(HttpMethod.GET, "/api/v1/schools", "/api/v1/schools/{id}").permitAll()
+                                        .requestMatchers(HttpMethod.PUT, "/api/v1/schools/{id}").hasRole(ADMIN)
+                                        .requestMatchers(HttpMethod.POST, "/api/v1/schools").hasRole(ADMIN)
+                                        .requestMatchers(HttpMethod.DELETE, "/api/v1/schools/{id}").hasRole(ADMIN)
+
+                                        /* ##########################################
+                                         *  Assigment endpoints
+                                         *///########################################
+                                        .requestMatchers(HttpMethod.GET, "/api/v1/assignments", "/api/v1/assignments/{id}").permitAll()
+                                        .requestMatchers(HttpMethod.PUT, "/api/v1/assignments/{id}").hasRole(TEACHER)
+                                        .requestMatchers(HttpMethod.POST, "/api/v1/assignments").hasRole(TEACHER)
+                                        .requestMatchers(HttpMethod.DELETE, "/api/v1/assignments/{id}").hasRole(TEACHER)
+
+                                        /* ##########################################
+                                         *  Course endpoints
+                                         *///########################################
+                                        .requestMatchers(HttpMethod.GET, "/api/v1/courses", "/api/v1/courses/{id}", "/api/v1/courses/{id}/teacher").permitAll()
+                                        .requestMatchers(HttpMethod.PUT, "/api/v1/courses/{id}").hasRole(TEACHER)
+                                        .requestMatchers(HttpMethod.POST, "/api/v1/courses").hasRole(TEACHER)
+                                        .requestMatchers(HttpMethod.DELETE, "/api/v1/courses/{id}").hasRole(TEACHER)
+                                        .requestMatchers(HttpMethod.GET, "/api/v1/courses/{id}/students").hasRole(TEACHER)
+
+                                        /* ##########################################
                                          *  Admin endpoints
                                          *///########################################
                                         .requestMatchers("/api/v1/admins/**").hasRole(ADMIN)

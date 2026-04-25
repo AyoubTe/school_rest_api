@@ -6,6 +6,7 @@ import net.samiayoub.school.dto.responses.CourseResponse;
 import net.samiayoub.school.dto.responses.GradeDetailsResponse;
 import net.samiayoub.school.dto.responses.StudentCourseDetailsResponse;
 import net.samiayoub.school.dto.responses.StudentResponse;
+import net.samiayoub.school.entity.Student;
 import net.samiayoub.school.mapper.StudentMapper;
 import net.samiayoub.school.security.SecurityConfig;
 import net.samiayoub.school.security.jwt.JwtTokenProvider;
@@ -109,10 +110,10 @@ class StudentControllerTest {
     @Test
     @WithMockUser(username = "student.test", roles = {"STUDENT"})
     void shouldNotUpdateStudent() throws Exception {
-        StudentRequest request = new StudentRequest("student.test", "Test", "STUDENT", "student.test@school.net", "HashedPassword");
+        Student request = new Student(1L, "student.test", "Test", "STUDENT", "student.test@school.net", "HashedPassword");
         StudentResponse response = new StudentResponse(1L, "student.test", "Test", "STUDENT", "student.test@school.net");
 
-        when(studentService.updateStudent(studentMapper.toEntity(request))).thenReturn(response);
+        when(studentService.updateStudent(request)).thenReturn(response);
 
         mockMvc.perform(post("/api/v1/students")
                         .with(csrf())

@@ -2,6 +2,7 @@ package net.samiayoub.school.controller;
 
 import net.samiayoub.school.dto.requets.SchoolRequest;
 import net.samiayoub.school.dto.responses.SchoolResponse;
+import net.samiayoub.school.entity.School;
 import net.samiayoub.school.mapper.SchoolMapper;
 import net.samiayoub.school.service.SchoolService;
 import org.springframework.http.HttpStatus;
@@ -39,10 +40,11 @@ public class SchoolController {
         return schoolService.createSchool(schoolMapper.toEntity(schoolRequest));
     }
 
-    @PutMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public SchoolResponse updateSchool(@RequestBody SchoolRequest schoolRequest) {
-        return schoolService.updateSchool(schoolMapper.toEntity(schoolRequest));
+    @PutMapping("/{id}")
+    public SchoolResponse updateSchool(@RequestBody SchoolRequest schoolRequest,  @PathVariable Long id) {
+        School school = schoolMapper.toEntity(schoolRequest);
+        school.setId(id);
+        return schoolService.updateSchool(school);
     }
 
     @DeleteMapping("/{id}")

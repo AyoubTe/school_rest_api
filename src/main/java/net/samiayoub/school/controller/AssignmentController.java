@@ -1,7 +1,9 @@
 package net.samiayoub.school.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import net.samiayoub.school.dto.requets.AssignmentRequest;
 import net.samiayoub.school.dto.responses.AssignmentResponse;
+import net.samiayoub.school.entity.Assignment;
 import net.samiayoub.school.mapper.AssignmentMapper;
 import net.samiayoub.school.service.AssignmentService;
 import org.springframework.http.HttpStatus;
@@ -28,29 +30,58 @@ public class AssignmentController {
         this.assignmentMapper = assignmentMapper;
     }
 
+    /**
+     * Endpoints to get all assignments
+     * @return List<AssignmentResponse>
+     */
     @GetMapping
     public List<AssignmentResponse> getAssignments() {
         return assignmentService.getAllAssignments();
     }
 
+    /**
+     * Endpoint to create an assignment
+     * @param assignmentRequest
+     * @return AssignmentResponse
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation (
+            summary = "Create an assignment",
+            description = "Takes an assignment as an parameter and save it on the db"
+    )
     public AssignmentResponse createAssignment(@RequestBody AssignmentRequest assignmentRequest) {
         return assignmentService.createAssignment(assignmentMapper.toEntity(assignmentRequest));
     }
 
-    @PutMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public AssignmentResponse updateAssignment(@RequestBody AssignmentRequest assignmentRequest) {
-        return assignmentService.updateAssignment(assignmentMapper.toEntity(assignmentRequest));
+    /**
+     * Endpoint to update an assignment
+     * @param assignmentRequest
+     * @param id
+     * @return AssignmentResponse
+     */
+    @PutMapping("/{id}")
+    public AssignmentResponse updateAssignment(@RequestBody AssignmentRequest assignmentRequest, @PathVariable Long id) {
+        Assignment assignment = assignmentMapper.toEntity(assignmentRequest);
+        assignment.setId(id);
+        return assignmentService.updateAssignment(assignment);
     }
 
+    /**
+     * Endpoint to update an assignment
+     * @param id
+     */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAssignment(@PathVariable Long id) {
         assignmentService.getAssignmentById(id);
     }
 
+    /**
+     * Endpoint to get information of an assignment
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     public AssignmentResponse getAssigment(@PathVariable Long id) {
         return assignmentService.getAssignmentById(id);
