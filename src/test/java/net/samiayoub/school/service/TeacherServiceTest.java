@@ -1,7 +1,11 @@
 package net.samiayoub.school.service;
 
+import net.samiayoub.school.dto.responses.CourseResponse;
+import net.samiayoub.school.dto.responses.SchoolResponse;
 import net.samiayoub.school.dto.responses.TeacherResponse;
 import net.samiayoub.school.entity.Teacher;
+import net.samiayoub.school.mapper.CourseMapper;
+import net.samiayoub.school.mapper.SchoolMapper;
 import net.samiayoub.school.mapper.TeacherMapper;
 import net.samiayoub.school.repository.TeacherRepository;
 import org.assertj.core.api.Assertions;
@@ -26,6 +30,12 @@ class TeacherServiceTest {
 
     @Mock
     private TeacherMapper teacherMapper;
+
+    @Mock
+    private CourseMapper courseMapper;
+
+    @Mock
+    private SchoolMapper schoolMapper;
 
     @InjectMocks
     private TeacherService teacherService;
@@ -101,19 +111,68 @@ class TeacherServiceTest {
     }
 
     @Test
-    void getCourseByTeacherId() {
+    void shouldGetCoursesByTeacherId() {
+        // Arrange
+        CourseResponse response1 = new CourseResponse(1L, "MAT301", "Algebra");
+        CourseResponse response2 = new CourseResponse(1L, "MAT302", "Analytics");
+        CourseResponse response3 = new CourseResponse(1L, "MAT302", "Statistics");
+
+        Teacher teacher = new Teacher(1L, "teacher.test", "Test", "TEACHER", "teacher@school.net", "password123", "Mathematiques");
+
+        when(teacherRepository.findById(1L)).thenReturn(Optional.of(teacher));
+
+        when(courseMapper.toDtoList(teacher.getCourses())).thenReturn(List.of(response1, response2, response3));
+
+        // Act
+        List<CourseResponse> results = teacherService.getCoursesByTeacherId(1L);
+
+        // Assert
+        assertThat(results)
+                .hasSize(3)
+                .isEqualTo(List.of(response1, response2, response3));
     }
 
     @Test
-    void getSchool() {
+    void shouldGetSchool() {
+        // Arrange
+        SchoolResponse response = new SchoolResponse(1L, "SA Business School", "2 Av Mclean, Fynor, MM");
+        Teacher teacher = new Teacher(1L, "teacher.test", "Test", "TEACHER", "teacher@school.net", "password123", "Mathematiques");
 
+        when(teacherRepository.findById(1L)).thenReturn(Optional.of(teacher));
+        when(schoolMapper.toDto(teacher.getSchool())).thenReturn(response);
+
+        // Act
+        SchoolResponse result = teacherService.getSchool(1L);
+
+        // Assert
+        assertThat(result).isEqualTo(response);
     }
 
     @Test
-    void isTeacherExists() {
+    void shouldCheckIfTeacherExists() {
+        // Arrange
+        Teacher teacher = new Teacher(1L, "teacher.test", "Test", "TEACHER", "teacher@school.net", "password123", "Mathematiques");
+
+        when(teacherRepository.findByUsername("teacher.test")).thenReturn(Optional.of(teacher));
+
+        // Act
+        Boolean result = teacherService.isTeacherExists("teacher.test");
+
+        // Assert
+        assertThat(result).isTrue();
     }
 
     @Test
-    void getTeacherByUsernameOrEmail() {
+    void shouldGetTeacherByUsernameOrEmail() {
+        // Arrange
+        Teacher teacher = new Teacher(1L, "teacher.test", "Test", "TEACHER", "teacher@school.net", "password123", "Mathematiques");
+
+        when(teacherRepository.findByUsernameOrEmail("teacher.test", "teacher.test")).thenReturn(Optional.of(teacher));
+
+        // Act
+        Teacher result = teacherService.getTeacherByUsernameOrEmail("teacher.test");
+
+        // Assert
+        assertThat(result).isEqualTo(teacher);
     }
 }
